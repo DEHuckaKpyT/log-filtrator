@@ -35,6 +35,19 @@ class LogAnalyzerTest {
     }
 
     @Test
+    void analyzeSingleSecondBadAccessibility() throws IOException {
+        // Arrange
+        when(reader.readLine()).thenReturn("...01:01:01 +1000] \"HTTP/1.1\" 200 2 10.1 \"-\"...")
+                               .thenReturn("");
+
+        // Act
+        analyzer.analyze();
+
+        // Assert
+        verify(writeProvider).write("01:01:01 01:01:01 0.0");
+    }
+
+    @Test
     void analyzeFirstSecondBadAccessibility() throws IOException {
         // Arrange
         when(reader.readLine()).thenReturn("...01:01:01 +1000] \"HTTP/1.1\" 200 2 1.1 \"-\"...")
