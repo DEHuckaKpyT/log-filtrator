@@ -45,7 +45,6 @@ public class LogAnalyzer {
                     currentRequestsCount += 1;
                     if (hasFailure(lineInfo))
                         currentRequestFailuresCount += 1;
-                    int a = 0;//TODO remove
                     continue;
                 }
 
@@ -69,6 +68,16 @@ public class LogAnalyzer {
                 currentRequestsCount = 1;
                 currentRequestFailuresCount = hasFailure(lineInfo) ? 1 : 0;
             }
+
+            float currentAccessibilityLevel = (currentRequestsCount - currentRequestFailuresCount) * 100f / currentRequestsCount;
+            if (currentAccessibilityLevel < minAccessibilityLevel) {
+                if (periodStart == null) periodStart = currentTime;
+                periodEnd = currentTime;
+                totalRequestsCount += currentRequestsCount;
+                totalRequestFailuresCount += currentRequestFailuresCount;
+            }
+            float totalAccessibilityLevel = (totalRequestsCount - totalRequestFailuresCount) * 100f / totalRequestsCount;
+            printlnTotalPeriod(periodStart, periodEnd, totalAccessibilityLevel);
         } catch (IOException e) {
             throw new RuntimeException("Ошибка во время считывания следующей строки", e);
         }
@@ -88,15 +97,4 @@ public class LogAnalyzer {
 
         System.out.println(startTime + " " + endTime + " " + accessibilityLevel);
     }
-
-//    private void executePerLine(Consumer<String> block) {
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                block.accept(line);
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException("Ошибка во время считывания следующей строки", e);
-//        }
-//    }
 }
