@@ -2,6 +2,7 @@ package noorg.dehucka.testtask.data;
 
 import lombok.Builder;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
 
@@ -13,7 +14,8 @@ import java.time.LocalTime;
 @Value
 @Builder
 public class LineInfo {
-    /** Время, в которой совершён запрос */
+    /** Время, в которое совершён запрос */
+    @NotNull
     LocalTime requestTime;
     /** HTTP код ответа */
     int httpCode;

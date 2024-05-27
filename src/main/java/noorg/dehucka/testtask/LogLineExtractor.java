@@ -1,6 +1,8 @@
 package noorg.dehucka.testtask;
 
 import noorg.dehucka.testtask.data.LineInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalTime;
 import java.util.regex.Matcher;
@@ -15,7 +17,10 @@ public class LogLineExtractor {
 
     private static final Pattern LINE_INFO_PATTERN = Pattern.compile("(\\d{2}:\\d{2}:\\d{2}) \\+1000\\] \".*HTTP\\/1\\.1\" (\\d{3}) \\d (\\d+(?:\\.\\d*)?) \"-\"");
 
-    public LineInfo extract(String line) {
+    @Nullable
+    public LineInfo extract(@Nullable String line) {
+        if (StringUtils.isBlank(line)) return null;
+
         Matcher matcher = LINE_INFO_PATTERN.matcher(line);
 
         if (!matcher.find())
