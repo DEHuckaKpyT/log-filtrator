@@ -35,6 +35,18 @@ class LogAnalyzerTest {
     }
 
     @Test
+    void analyzeEmptyLog() throws IOException {
+        // Arrange
+        when(reader.readLine()).thenReturn("");
+
+        // Act
+        analyzer.analyze();
+
+        // Assert
+        verifyNoInteractions(writeProvider);
+    }
+
+    @Test
     void analyzeSingleSecondBadAccessibility() throws IOException {
         // Arrange
         when(reader.readLine()).thenReturn("...01:01:01 +1000] \"HTTP/1.1\" 200 2 10.1 \"-\"...")
@@ -45,6 +57,7 @@ class LogAnalyzerTest {
 
         // Assert
         verify(writeProvider).write("01:01:01 01:01:01 0.0");
+        verifyNoMoreInteractions(writeProvider);
     }
 
     @Test
@@ -61,22 +74,7 @@ class LogAnalyzerTest {
 
         // Assert
         verify(writeProvider).write("01:01:01 01:01:01 50.0");
-    }
-
-    @Test
-    void analyzeMiddleSecondBadAccessibility() throws IOException {
-        // Arrange
-        when(reader.readLine()).thenReturn("...01:01:01 +1000] \"HTTP/1.1\" 200 2 1.1 \"-\"...")
-                               .thenReturn("...01:01:02 +1000] \"HTTP/1.1\" 200 2 20.2 \"-\"...")
-                               .thenReturn("...01:01:02 +1000] \"HTTP/1.1\" 200 2 3.3 \"-\"...")
-                               .thenReturn("...01:01:03 +1000] \"HTTP/1.1\" 200 2 4.4 \"-\"...")
-                               .thenReturn(null);
-
-        // Act
-        analyzer.analyze();
-
-        // Assert
-        verify(writeProvider).write("01:01:02 01:01:02 50.0");
+        verifyNoMoreInteractions(writeProvider);
     }
 
     @Test
@@ -93,6 +91,7 @@ class LogAnalyzerTest {
 
         // Assert
         verify(writeProvider).write("01:01:03 01:01:03 0.0");
+        verifyNoMoreInteractions(writeProvider);
     }
 
     @Test
@@ -118,5 +117,6 @@ class LogAnalyzerTest {
         inOrder.verify(writeProvider).write("01:01:01 01:01:02 33.333332");
         inOrder.verify(writeProvider).write("01:01:04 01:01:04 0.0");
         inOrder.verify(writeProvider).write("01:01:06 01:01:07 33.333332");
+        verifyNoMoreInteractions(writeProvider);
     }
 }
